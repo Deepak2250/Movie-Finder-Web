@@ -1,9 +1,17 @@
 # Compiled class file
 *.class
-# Eclipse project files
-.settings/
 # Maven build directory
-.target/
+
+/MovieSearcher/target
+
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
 # Log file
 *.log
 
