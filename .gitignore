@@ -1,10 +1,9 @@
 # Compiled class file
 *.class
+# Eclipse project files
 .settings/
+# Maven build directory
 .target/
-.classpath
-/resources/database.properties
-/Movie-Finder-Web/
 # Log file
 *.log
 
