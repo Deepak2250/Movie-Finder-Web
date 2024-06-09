@@ -56,8 +56,8 @@
 <body>
 <div class="search-container">
     <div class="search-title">Search Movies</div>
-    <form action="/search" method="GET">
-        <input type="text" name="query" placeholder="Enter movie name" class="search-box">
+    <form action="moviesearch" method="post">
+        <input type="text" name="movieName" placeholder="Enter movie name" class="search-box">
         <button type="submit" class="search-button">Search</button>
     </form>
 </div>

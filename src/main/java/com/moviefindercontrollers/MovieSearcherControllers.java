@@ -5,6 +5,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +21,8 @@ import com.moviefindercontrollers.model.MovieFinderLoginUserPojo;
 import com.moviefindercontrollers.model.MovieFinderUser;
 import com.moviefindercontrollers.model.MovieFinderUserImp;
 import com.moviefindercontrollers.model.MovieFinderUserPojo;
+import com.moviefindercontrollers.service.ApiService;
+import com.moviefindercontrollers.service.MovieDetails;
 import com.moviefindercontrollers.service.MovieFinderService;
 
 import net.bytebuddy.matcher.ModifierMatcher.Mode;
@@ -32,6 +36,9 @@ public class MovieSearcherControllers {
 	private MovieFinderService finderService;
 	@Autowired
 	MovieFinderUserImp finderUserImp;
+	
+	@Autowired
+	private ApiService apiService;
 
 	/// register page///
 
@@ -141,6 +148,16 @@ public class MovieSearcherControllers {
 	public String MovieSearchPage() {
 		return "moviesearch";
 	}
+	
+	/// Searching The Movie 
+	
+	@PostMapping("/moviesearch")
+	public String MovieSearchResult(@RequestParam("movieName") String movieName , Model model , HttpSession session) {
+		String movie = apiService.fetchDataFromApi(movieName);
+		session.setAttribute("moviename", movie);
+		return"moviesearchresult";
+	}
+	
 
 	/// About page////
 
