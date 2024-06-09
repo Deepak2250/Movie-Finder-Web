@@ -1,4 +1,4 @@
-package com.moviefindercontrollers.database;
+package com.moviefindercontrollers.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,8 +13,8 @@ public class MovieFinderUserImp implements Dao {
 	
 	@Override
 	public int saveUser(MovieFinderUser finderUser) {
-		String query = "INSERT INTO moviefinderuser (name, email, passoword) VALUES (?, ?, ?)";
-		int updatedLine = jdbcTemplate.update(query,finderUser.getName() , finderUser.getEmail(), finderUser.getPassword() );
+		String query = "INSERT INTO moviefinderuser (name, email, passoword , favouriteMovie , favouriteGenre) VALUES (?, ?, ? , ?, ?)";
+		int updatedLine = jdbcTemplate.update(query,finderUser.getName() , finderUser.getEmail(), finderUser.getPassword() , finderUser.getFavouriteMovie() , finderUser.getFavouriteGenre());
 		System.out.println("It Passed THe Repo layer");
 		return updatedLine;
 	}

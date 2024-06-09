@@ -1,4 +1,4 @@
-package com.moviefindercontrollers.database;
+package com.moviefindercontrollers.model;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
@@ -9,6 +9,8 @@ import javax.validation.constraints.Size;
 public class MovieFinderUserPojo {
 	
 	
+	
+
 	@NotEmpty(message = "Name is Required")
 	private String name;
 	
@@ -20,6 +22,11 @@ public class MovieFinderUserPojo {
 	@NotEmpty(message = "Password is Required")
 	private String password;
 	
+	@NotEmpty(message = "favoriteMovie is Required")
+	private String favouriteMovie;
+
+	@NotEmpty(message = "favoriteGenre is Required")
+	private String favouriteGenre;
 	
 	public String getName() {
 		return name;
@@ -39,4 +46,27 @@ public class MovieFinderUserPojo {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public String getFavouriteMovie() { // Changed from getFavoriteMovie
+		return favouriteMovie;
+	}
+
+	public void setFavouriteMovie(String favouriteMovie) { // Changed from setFavoriteMovie
+		this.favouriteMovie = favouriteMovie;
+	}
+
+	public String getFavouriteGenre() { // Changed from getFavoriteGenre
+		return favouriteGenre;
+	}
+
+	public void setFavouriteGenre(String favouriteGenre) { // Changed from setFavoriteGenre
+		this.favouriteGenre = favouriteGenre;
+	}
+	@Override
+	public String toString() {
+		return "MovieFinderUserPojo [name=" + name + ", email=" + email + ", password=" + password + ", favouriteMovie="
+				+ favouriteMovie + ", favouriteGenre=" + favouriteGenre + "]";
+	}
+	
+
 }

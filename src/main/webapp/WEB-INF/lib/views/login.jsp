@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+ <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -92,12 +93,18 @@
         .signup-link a:hover {
             text-decoration: underline;
         }
+        
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Login</h1>
-        <form:form modelAttribute="finderUserPojo" action="login" method="post">
+        <form:form modelAttribute="movieFinderLoginUserPojo" action="loggedIn" method="post">
             <div class="form-group">
                 <form:label path="email">Email</form:label>
                 <form:input path="email" type="email" placeholder="Enter your email" />
@@ -111,7 +118,11 @@
             <div class="form-group">
                 <button type="submit">Login</button>
             </div>
+            
         </form:form>
+         <c:if test="${registerFirst }">
+           <h1 class="error">Invalid User</h1>
+        </c:if>
         <div class="signup-link">
             Don't have an account? <a href="register">Sign Up</a>
         </div>

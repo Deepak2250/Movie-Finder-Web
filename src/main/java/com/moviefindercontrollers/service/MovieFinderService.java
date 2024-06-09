@@ -1,7 +1,10 @@
-package com.moviefindercontrollers.database;
+package com.moviefindercontrollers.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.moviefindercontrollers.model.MovieFinderUser;
+import com.moviefindercontrollers.model.MovieFinderUserImp;
 
 
 @Service
