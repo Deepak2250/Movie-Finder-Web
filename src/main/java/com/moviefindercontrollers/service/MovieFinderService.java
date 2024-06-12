@@ -18,4 +18,8 @@ public class MovieFinderService {
 		System.out.println("it passed the service layer");
 		return finderUserImp.saveUser(finderUser);
 	}
+	
+	public void getUserImage(String email){
+		finderUserImp.FindImage(email);
+	}
 }

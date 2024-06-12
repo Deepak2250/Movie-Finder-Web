@@ -88,7 +88,7 @@ button {
 <body>
     <div class="container">
         <h1>Sign Up</h1>
-        <form:form modelAttribute="finderUserPojo" id="registrationForm" action="registration" method="post">
+        <form:form modelAttribute="finderUserPojo" id="registrationForm" action="registration" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <form:input path="name" type="text" id="name" name="name" placeholder="Enter your full name" />
@@ -114,6 +114,12 @@ button {
                 <form:input path="favouriteGenre" type="text" id="favouriteGenre" name="favouriteGenre" placeholder="Enter your favorite genre" />
                 <form:errors path="favouriteGenre" cssClass="error-message"></form:errors>
             </div>
+            
+            <div class="form-group">
+            <label for="file">Upload File</label>
+            <input type="file" name="file"/>
+            </div>
+            
             <div class="form-group">
                 <button type="submit">Sign Up</button>
             </div>

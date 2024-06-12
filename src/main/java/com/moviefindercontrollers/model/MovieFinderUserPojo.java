@@ -27,6 +27,8 @@ public class MovieFinderUserPojo {
 
 	@NotEmpty(message = "favoriteGenre is Required")
 	private String favouriteGenre;
+
+	private byte[] image;
 	
 	public String getName() {
 		return name;
@@ -62,6 +64,16 @@ public class MovieFinderUserPojo {
 	public void setFavouriteGenre(String favouriteGenre) { // Changed from setFavoriteGenre
 		this.favouriteGenre = favouriteGenre;
 	}
+	
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "MovieFinderUserPojo [name=" + name + ", email=" + email + ", password=" + password + ", favouriteMovie="

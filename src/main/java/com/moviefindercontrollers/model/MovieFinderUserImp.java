@@ -13,8 +13,8 @@ public class MovieFinderUserImp implements Dao {
 	
 	@Override
 	public int saveUser(MovieFinderUser finderUser) {
-		String query = "INSERT INTO moviefinderuser (name, email, passoword , favouriteMovie , favouriteGenre) VALUES (?, ?, ? , ?, ?)";
-		int updatedLine = jdbcTemplate.update(query,finderUser.getName() , finderUser.getEmail(), finderUser.getPassword() , finderUser.getFavouriteMovie() , finderUser.getFavouriteGenre());
+		String query = "INSERT INTO moviefinderuser (name, email, passoword , favouriteMovie , favouriteGenre , image) VALUES (?, ?, ? , ?, ? , ?)";
+		int updatedLine = jdbcTemplate.update(query,finderUser.getName() , finderUser.getEmail(), finderUser.getPassword() , finderUser.getFavouriteMovie() , finderUser.getFavouriteGenre() , finderUser.getImage());
 		System.out.println("It Passed THe Repo layer");
 		return updatedLine;
 	}
@@ -23,6 +23,14 @@ public class MovieFinderUserImp implements Dao {
 	@Override
 	public MovieFinderUser findByEmail(String email) {
 		String query = "SELECT * FROM moviefinderuser where email = ?";
+		MovieFinderUser finderUser = jdbcTemplate.queryForObject(query, new RowMapperObj() ,email );
+		return finderUser;
+	}
+
+
+	@Override
+	public MovieFinderUser FindImage(String email) {
+		String query = "Select image From moviefinderuser where email = ?";
 		MovieFinderUser finderUser = jdbcTemplate.queryForObject(query, new RowMapperObj() ,email );
 		return finderUser;
 	}

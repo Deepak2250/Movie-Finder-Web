@@ -1,5 +1,7 @@
 package com.moviefindercontrollers.model;
 
+import java.util.Arrays;
+
 public class MovieFinderUser {
 
 	private String name;
@@ -11,16 +13,27 @@ public class MovieFinderUser {
 	private String favouriteMovie; // Changed from favoriteMovie
 
 	private String favouriteGenre; // Changed from favoriteGenre
+	
+	private byte[] image;
 
 	public MovieFinderUser() {
 	}
 
-	public MovieFinderUser(String name, String email, String password, String favouriteMovie, String favouriteGenre) {
+	public MovieFinderUser(String name, String email, String password, String favouriteMovie, String favouriteGenre , byte[] image) {
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.favouriteMovie = favouriteMovie;
 		this.favouriteGenre = favouriteGenre;
+		this.image = image;
+	}
+
+	public byte[] getImage() {
+		return image;
+	}
+
+	public void setImage(byte[] image) {
+		this.image = image;
 	}
 
 	public String getName() {
@@ -62,11 +75,12 @@ public class MovieFinderUser {
 	public void setFavouriteGenre(String favouriteGenre) { // Changed from setFavoriteGenre
 		this.favouriteGenre = favouriteGenre;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "MovieFinderUserPojo [name=" + name + ", email=" + email + ", password=" + password + ", favouriteMovie="
-				+ favouriteMovie + ", favouriteGenre=" + favouriteGenre + "]";
+		return "MovieFinderUser [name=" + name + ", email=" + email + ", password=" + password + ", favouriteMovie="
+				+ favouriteMovie + ", favouriteGenre=" + favouriteGenre + ", image=" + Arrays.toString(image) + "]";
 	}
-
+	
+	
 }

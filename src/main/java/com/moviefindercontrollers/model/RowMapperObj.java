@@ -15,6 +15,7 @@ public class RowMapperObj implements RowMapper<MovieFinderUser> {
 		finderUser.setPassword(rs.getString("passoword"));
 		finderUser.setFavouriteMovie(rs.getString("favouriteMovie"));
 		finderUser.setFavouriteGenre(rs.getString("favouriteGenre"));
+		finderUser.setImage(rs.getBytes("image"));
 		return finderUser;
 	}
 

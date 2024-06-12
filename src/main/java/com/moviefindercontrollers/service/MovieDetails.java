@@ -2,10 +2,11 @@ package com.moviefindercontrollers.service;
 
 
 
+
 public class MovieDetails {
 
 	private String name;
-	private int year;
+	private String year;
 	private String rated;
 	private String released;
 	private String[] genere;
@@ -17,7 +18,7 @@ public class MovieDetails {
 	private String img;
 	private String imdb;
 
-	public MovieDetails(String name, int year, String rated, String released, String[] genere, String director,
+	public MovieDetails(String name, String year, String rated, String released, String[] genere, String director,
 			String writer, String[] actors, String plot, String awards, String img, String imdb) {
 		
 		this.name = name;
@@ -47,11 +48,11 @@ public class MovieDetails {
 		this.name = name;
 	}
 
-	public int getYear() {
+	public String getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(String year) {
 		this.year = year;
 	}
 

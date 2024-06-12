@@ -1,5 +1,9 @@
 package com.moviefindercontrollers;
 
+import java.io.IOException;
+import java.util.Base64;
+import java.util.Iterator;
+
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -13,10 +17,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.google.gson.JsonObject;
 import com.moviefindercontrollers.model.MovieFinderLoginUserPojo;
 import com.moviefindercontrollers.model.MovieFinderUser;
 import com.moviefindercontrollers.model.MovieFinderUserImp;
@@ -36,7 +43,7 @@ public class MovieSearcherControllers {
 	private MovieFinderService finderService;
 	@Autowired
 	MovieFinderUserImp finderUserImp;
-	
+
 	@Autowired
 	private ApiService apiService;
 
@@ -50,7 +57,8 @@ public class MovieSearcherControllers {
 
 	@PostMapping("/registration")
 	public String registration(@Valid @ModelAttribute("finderUserPojo") MovieFinderUserPojo finderUserPojo,
-			BindingResult bindingResult, HttpSession httpSession, Model model) {
+			BindingResult bindingResult, HttpSession httpSession, Model model,
+			@RequestParam("file") MultipartFile file) {
 
 		if (bindingResult.hasErrors()) {
 			System.out.println(bindingResult.getErrorCount());
@@ -61,26 +69,40 @@ public class MovieSearcherControllers {
 			String email = finderUserPojo.getEmail();
 
 			MovieFinderUser existingUser = finderUserImp.findByEmail(email);
+			
 
 			if (existingUser != null && existingUser.getPassword().equals(finderUserPojo.getPassword())) {
 				return "registeredusers";
 			}
-		} catch (EmptyResultDataAccessException e) {
-			e.getMessage();
-		}
-
-		try {
+			
+			
+			
+            
 			MovieFinderUser finderUser = new MovieFinderUser(finderUserPojo.getName(), finderUserPojo.getEmail(),
-					finderUserPojo.getPassword() , finderUserPojo.getFavouriteMovie() , finderUserPojo.getFavouriteGenre());
+					finderUserPojo.getPassword(), finderUserPojo.getFavouriteMovie(),
+					finderUserPojo.getFavouriteGenre(), file.getBytes());
+			
+			
 
-			httpSession.setAttribute("User", finderUser);
-			finderService.addUser(finderUser);
+			if (!file.isEmpty()) {
+				httpSession.setAttribute("User", finderUser);
+				finderService.addUser(finderUser);
 
-		} catch (Exception e) {
-			e.printStackTrace();
+				// store the bytes somewhere
+				return "userregistered";
+
+			} else {
+				return "register";
+			}
+
 		}
-		return "userregistered";
+	catch(Exception e)
+	{
+		e.printStackTrace();
+		return "register";
 	}
+}
+
 
 	/// Login Page /////
 
@@ -109,9 +131,16 @@ public class MovieSearcherControllers {
 
 			if (existingUser != null && existingUser.getPassword().equals(movieFinderLoginUserPojo.getPassword())) {
 				httpSession.setAttribute("isLoggedIn", true);
-				httpSession.setAttribute("email", email);
 				
+				byte[] image = existingUser.getImage();
+				
+				String base64EncodedImage = Base64.getEncoder().encodeToString(image);
+				System.out.println(base64EncodedImage);
+				httpSession.setAttribute("image", base64EncodedImage);
+				httpSession.setAttribute("email", email);
+
 				System.out.println("The Email and Password is Correct ");
+				
 				return "redirect:/home"; // Redirecting to the home page
 			}
 
@@ -148,16 +177,16 @@ public class MovieSearcherControllers {
 	public String MovieSearchPage() {
 		return "moviesearch";
 	}
-	
-	/// Searching The Movie 
-	
+
+	/// Searching The Movie
+
 	@PostMapping("/moviesearch")
-	public String MovieSearchResult(@RequestParam("movieName") String movieName , Model model , HttpSession session) {
-		String movie = apiService.fetchDataFromApi(movieName);
-		session.setAttribute("moviename", movie);
-		return"moviesearchresult";
+	public String MovieSearchResult(@RequestParam("movieName") String movieName, Model model, HttpSession session) {
+		MovieDetails movieDetails = apiService.fetchDataFromApi(movieName);
+		model.addAttribute(movieDetails);
+		session.setAttribute("movieDetails", movieDetails);
+		return "moviesearchresult";
 	}
-	
 
 	/// About page////
 
@@ -167,22 +196,27 @@ public class MovieSearcherControllers {
 		model.addAttribute("isLoggedIn", isLoggedIn);
 		return "about";
 	}
-	
+
 	/// Profile
-	
+
 	@GetMapping("/profile")
-	public String profile(HttpSession session , Model model) {
-		
-		if(session.getAttribute("isLoggedIn")==null) {
+	public String profile(HttpSession session, Model model) {
+
+		if (session.getAttribute("isLoggedIn") == null) {
 			return "redirect:/login";
 		}
-		
-		String email = (String)session.getAttribute("email");
+
+		String email = (String) session.getAttribute("email");
 		MovieFinderUser userInfo = finderUserImp.findByEmail(email);
+		String image = (String) session.getAttribute("image");
+		
+		session.setAttribute("image", image);
 		session.setAttribute("userInfo", userInfo);
 		model.addAttribute(userInfo);
-		System.out.println(userInfo.toString());
+		model.addAttribute("image", image);
+
 		return "profile";
+
 	}
 
 }
