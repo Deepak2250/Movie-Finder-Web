@@ -2,10 +2,13 @@ package com.moviefindercontrollers.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -38,43 +41,34 @@ public class ApiService {
     
         
        
+        try {
+        movieDetails.setName(jsonObject.has("Title") ? jsonObject.get("Title").getAsString() : "Null");
+        movieDetails.setYear(jsonObject.has("Year") ? jsonObject.get("Year").getAsString() : "Null");
+        movieDetails.setRated(jsonObject.has("Rated") ? jsonObject.get("Rated").getAsString() : "Null");
+        movieDetails.setReleased(jsonObject.has("Released") ? jsonObject.get("Released").getAsString() : "Null");
+        movieDetails.setGenere(jsonObject.has("Genre") ? jsonObject.get("Genre").getAsString().split(", ") : new String[]{"Null"});
+        movieDetails.setDirector(jsonObject.has("Director") ? jsonObject.get("Director").getAsString() : "Null");
+        movieDetails.setWriter(jsonObject.has("Writer") ? jsonObject.get("Writer").getAsString() : "Null");
+        movieDetails.setActors(jsonObject.has("Actors") ? jsonObject.get("Actors").getAsString().split(", ") : new String[]{"Null"});
+        movieDetails.setPlot(jsonObject.has("Plot") ? jsonObject.get("Plot").getAsString() : "Null");
+        movieDetails.setAwards(jsonObject.has("Awards") ? jsonObject.get("Awards").getAsString() : "Null");
+        movieDetails.setImg(jsonObject.has("Poster") ? jsonObject.get("Poster").getAsString() : "Null");
+        movieDetails.setImdb(jsonObject.has("imdbRating") ? jsonObject.get("imdbRating").getAsString() : "Null");
+
+    } catch (HttpClientErrorException e) {
+    	
+        throw new ApiException("HTTP error occurred: " + e.getStatusCode(), e);
         
-        if (jsonObject.has("Title")) {
-            movieDetails.setName(jsonObject.get("Title").getAsString());
-        }
-        if (jsonObject.has("Year")) {
-            movieDetails.setYear(jsonObject.get("Year").getAsString());
-        }
-        if (jsonObject.has("Rated")) {
-            movieDetails.setRated(jsonObject.get("Rated").getAsString());
-        }
-        if (jsonObject.has("Released")) {
-            movieDetails.setReleased(jsonObject.get("Released").getAsString());
-        }
-        if (jsonObject.has("Genre")) {
-            movieDetails.setGenere(jsonObject.get("Genre").getAsString().split(", "));
-        }
-        if (jsonObject.has("Director")) {
-            movieDetails.setDirector(jsonObject.get("Director").getAsString());
-        }
-        if (jsonObject.has("Writer")) {
-            movieDetails.setWriter(jsonObject.get("Writer").getAsString());
-        }
-        if (jsonObject.has("Actors")) {
-            movieDetails.setActors(jsonObject.get("Actors").getAsString().split(", "));
-        }
-        if (jsonObject.has("Plot")) {
-            movieDetails.setPlot(jsonObject.get("Plot").getAsString());
-        }
-        if (jsonObject.has("Awards")) {
-            movieDetails.setAwards(jsonObject.get("Awards").getAsString());
-        }
-        if (jsonObject.has("Poster")) {
-            movieDetails.setImg(jsonObject.get("Poster").getAsString());
-        }
-        if (jsonObject.has("imdbRating")) {
-            movieDetails.setImdb(jsonObject.get("imdbRating").getAsString());
-        }
+    } catch (RestClientException e) {
+    	
+        throw new ApiException("Error occurred while calling the API: " + e.getMessage(), e);
+        
+    } catch (JsonSyntaxException e) {
+    	
+        throw new ApiException("Error parsing JSON response: " + e.getMessage(), e);
+        
+    } 
+
         
        
 

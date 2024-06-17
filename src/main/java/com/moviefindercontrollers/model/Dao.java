@@ -6,6 +6,9 @@ public interface Dao {
 	
 	MovieFinderUser findByEmail(String email);
 	
-	MovieFinderUser FindImage(String email);
+	int updateUser(MovieFinderUser finderUser);
 	
+	int deleteUser(String email);
+		
+	Long userID(String email);
 }

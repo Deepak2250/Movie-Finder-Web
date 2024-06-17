@@ -2,37 +2,38 @@ package com.moviefindercontrollers;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.hibernate.validator.internal.util.privilegedactions.NewInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.google.gson.JsonObject;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.moviefindercontrollers.model.MovieFinderLoginUserPojo;
 import com.moviefindercontrollers.model.MovieFinderUser;
 import com.moviefindercontrollers.model.MovieFinderUserImp;
 import com.moviefindercontrollers.model.MovieFinderUserPojo;
+import com.moviefindercontrollers.model.UpdateUserPojo;
 import com.moviefindercontrollers.service.ApiService;
 import com.moviefindercontrollers.service.MovieDetails;
 import com.moviefindercontrollers.service.MovieFinderService;
 
-import net.bytebuddy.matcher.ModifierMatcher.Mode;
+import net.bytebuddy.asm.MemberSubstitution.Substitution.Chain.Step;
 
 @Controller
 public class MovieSearcherControllers {
@@ -69,40 +70,33 @@ public class MovieSearcherControllers {
 			String email = finderUserPojo.getEmail();
 
 			MovieFinderUser existingUser = finderUserImp.findByEmail(email);
-			
 
 			if (existingUser != null && existingUser.getPassword().equals(finderUserPojo.getPassword())) {
 				return "registeredusers";
 			}
-			
-			
-			
-            
+
 			MovieFinderUser finderUser = new MovieFinderUser(finderUserPojo.getName(), finderUserPojo.getEmail(),
 					finderUserPojo.getPassword(), finderUserPojo.getFavouriteMovie(),
 					finderUserPojo.getFavouriteGenre(), file.getBytes());
-			
-			
 
 			if (!file.isEmpty()) {
 				httpSession.setAttribute("User", finderUser);
 				finderService.addUser(finderUser);
 
-				// store the bytes somewhere
+				String base64EncodedImage = Base64.getEncoder().encodeToString(finderUser.getImage());
+				httpSession.setAttribute("image", base64EncodedImage);
+
 				return "userregistered";
 
 			} else {
 				return "register";
 			}
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "register";
 		}
-	catch(Exception e)
-	{
-		e.printStackTrace();
-		return "register";
 	}
-}
-
 
 	/// Login Page /////
 
@@ -131,16 +125,15 @@ public class MovieSearcherControllers {
 
 			if (existingUser != null && existingUser.getPassword().equals(movieFinderLoginUserPojo.getPassword())) {
 				httpSession.setAttribute("isLoggedIn", true);
-				
+
 				byte[] image = existingUser.getImage();
-				
+
 				String base64EncodedImage = Base64.getEncoder().encodeToString(image);
-				System.out.println(base64EncodedImage);
 				httpSession.setAttribute("image", base64EncodedImage);
 				httpSession.setAttribute("email", email);
 
 				System.out.println("The Email and Password is Correct ");
-				
+
 				return "redirect:/home"; // Redirecting to the home page
 			}
 
@@ -182,9 +175,17 @@ public class MovieSearcherControllers {
 
 	@PostMapping("/moviesearch")
 	public String MovieSearchResult(@RequestParam("movieName") String movieName, Model model, HttpSession session) {
-		MovieDetails movieDetails = apiService.fetchDataFromApi(movieName);
-		model.addAttribute(movieDetails);
-		session.setAttribute("movieDetails", movieDetails);
+		try {
+			MovieDetails movieDetails = apiService.fetchDataFromApi(movieName);
+			System.out.println(movieDetails);
+			if (movieDetails.getName() == "Null") {
+				return "errorpage";
+			}
+			model.addAttribute(movieDetails);
+			session.setAttribute("movieDetails", movieDetails);
+		} catch (Exception e) {
+			return "errorpage";
+		}
 		return "moviesearchresult";
 	}
 
@@ -207,11 +208,15 @@ public class MovieSearcherControllers {
 		}
 
 		String email = (String) session.getAttribute("email");
+		Long id = finderService.getUserId(email);
+
 		MovieFinderUser userInfo = finderUserImp.findByEmail(email);
+		userInfo.setId(id);
 		String image = (String) session.getAttribute("image");
-		
+
 		session.setAttribute("image", image);
 		session.setAttribute("userInfo", userInfo);
+		session.setAttribute("id", id);
 		model.addAttribute(userInfo);
 		model.addAttribute("image", image);
 
@@ -219,4 +224,42 @@ public class MovieSearcherControllers {
 
 	}
 
+	/// Updating Profile
+
+	@GetMapping("/updateProfilePage/{id}")
+	public String updatePage(@PathVariable("id") Long id, Model model, HttpSession session) {
+		session.setAttribute("id", id);
+		model.addAttribute("updateUserPojo", new UpdateUserPojo());
+		return "updateUser";
+	}
+
+	@PostMapping("/updateProfile")
+	public String profileUpdate(@Valid @ModelAttribute("updateUserPojo") UpdateUserPojo updateUserPojo,
+			BindingResult result, Model model, HttpSession session, @RequestParam("file") MultipartFile file)
+			throws IOException {
+		if (result.hasErrors()) {
+			return "updateUser"; // Return to the update form if there are validation errors
+		}
+
+		Long id = (Long) session.getAttribute("id");
+		MovieFinderUser finderUser = new MovieFinderUser(updateUserPojo.getName(), updateUserPojo.getFavouriteMovie(),
+				updateUserPojo.getFavouriteGenre(), id, file.getBytes());
+
+		finderService.modifyUser(finderUser);
+		return "redirect:/profile"; // Redirect to profile page after successful update
+	}
+
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/home";
+	}
+
+	@GetMapping("/deleteUser")
+	public String deleteUser(HttpSession session) {
+		String email = (String) session.getAttribute("email");
+		finderService.delete(email);
+		session.invalidate();
+		return "redirect:/home";
+	}
 }

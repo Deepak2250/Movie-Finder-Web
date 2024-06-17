@@ -1,6 +1,7 @@
 package com.moviefindercontrollers.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,12 @@ public class MovieFinderUserImp implements Dao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	private MovieFinderUser finderUser;
+	
+	public MovieFinderUserImp() {
+		this.finderUser = new MovieFinderUser();
+	}
+	
 	
 	
 	@Override
@@ -21,18 +28,41 @@ public class MovieFinderUserImp implements Dao {
 
 
 	@Override
-	public MovieFinderUser findByEmail(String email) {
-		String query = "SELECT * FROM moviefinderuser where email = ?";
-		MovieFinderUser finderUser = jdbcTemplate.queryForObject(query, new RowMapperObj() ,email );
-		return finderUser;
+    public MovieFinderUser findByEmail(String email) {
+        String query = "SELECT * FROM moviefinderuser WHERE email = ?";
+        try {
+            return jdbcTemplate.queryForObject(query, new RowMapperObj(), email);
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Return null if no user is found
+        }
+    }
+
+	@Override
+	public int updateUser(MovieFinderUser finderUser) {
+		String query = "Update moviefinderuser Set name = ? , favouriteMovie = ? , favouriteGenre = ? WHERE id = ?";
+		Object [] data = {finderUser.getName() , finderUser.getFavouriteMovie() , finderUser.getFavouriteGenre() , finderUser.getId()};
+		int updatedLine = jdbcTemplate.update(query, data);
+		return updatedLine;
 	}
 
 
 	@Override
-	public MovieFinderUser FindImage(String email) {
-		String query = "Select image From moviefinderuser where email = ?";
-		MovieFinderUser finderUser = jdbcTemplate.queryForObject(query, new RowMapperObj() ,email );
+	public int deleteUser(String email) {
+		String query = "Delete from moviefinderuser where email = ?";
+		return jdbcTemplate.update(query , email);
+		
+	}
+
+
+
+	@Override
+	public Long userID(String email) {
+		String query = "Select id from moviefinderuser where email = ?";
+		Long finderUser = jdbcTemplate.queryForObject(query, new IdRowMapper() , email);
 		return finderUser;
 	}
+
+
+
 
 }

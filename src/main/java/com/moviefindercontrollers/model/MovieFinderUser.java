@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public class MovieFinderUser {
 
+	private Long id;
+
 	private String name;
 
 	private String email;
@@ -13,19 +15,39 @@ public class MovieFinderUser {
 	private String favouriteMovie; // Changed from favoriteMovie
 
 	private String favouriteGenre; // Changed from favoriteGenre
-	
+
 	private byte[] image;
 
 	public MovieFinderUser() {
 	}
 
-	public MovieFinderUser(String name, String email, String password, String favouriteMovie, String favouriteGenre , byte[] image) {
+	public MovieFinderUser(String name, String email, String password, String favouriteMovie, String favouriteGenre,
+			byte[] image) {
+
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.favouriteMovie = favouriteMovie;
 		this.favouriteGenre = favouriteGenre;
 		this.image = image;
+	}
+
+	public MovieFinderUser(String name, String favouriteMovie, String favouriteGenre , Long id , byte[] image) {
+
+		this.name = name;
+		this.favouriteMovie = favouriteMovie;
+		this.favouriteGenre = favouriteGenre;
+		this.id = id;
+		this.image = image;
+
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public byte[] getImage() {
@@ -76,11 +98,4 @@ public class MovieFinderUser {
 		this.favouriteGenre = favouriteGenre;
 	}
 
-	@Override
-	public String toString() {
-		return "MovieFinderUser [name=" + name + ", email=" + email + ", password=" + password + ", favouriteMovie="
-				+ favouriteMovie + ", favouriteGenre=" + favouriteGenre + ", image=" + Arrays.toString(image) + "]";
-	}
-	
-	
 }

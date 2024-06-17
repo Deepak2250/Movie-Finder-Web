@@ -128,9 +128,9 @@
             <span>${userInfo.getFavouriteGenre()}</span>
         </div>
         <div class="btn-container">
-            <a href="/updateProfile" class="btn">Update Profile</a>
-            <a href="/deleteAccount" class="btn">Delete Account</a>
-            <a href="/logout" class="btn">Logout</a>
+            <a href="updateProfilePage/${userInfo.getId()}" class="btn">Update Profile</a>
+            <a href="deleteUser" class="btn">Delete Account</a>
+            <a href="logout" class="btn">Logout</a>
         </div>
     </div>
 </body>

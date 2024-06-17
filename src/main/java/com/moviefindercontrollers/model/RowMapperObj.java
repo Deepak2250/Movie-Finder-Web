@@ -10,6 +10,8 @@ public class RowMapperObj implements RowMapper<MovieFinderUser> {
 	@Override
 	public MovieFinderUser mapRow(ResultSet rs, int rowNum) throws SQLException {
 		MovieFinderUser finderUser = new MovieFinderUser();
+		
+		finderUser.setId(rs.getLong("id"));
 		finderUser.setName(rs.getString("name"));
 		finderUser.setEmail(rs.getString("email"));
 		finderUser.setPassword(rs.getString("passoword"));

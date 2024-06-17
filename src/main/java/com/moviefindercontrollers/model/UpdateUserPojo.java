@@ -1,26 +1,13 @@
 package com.moviefindercontrollers.model;
 
-import javax.validation.constraints.Email;
-
 import javax.validation.constraints.NotEmpty;
 
+public class UpdateUserPojo {
 
-public class MovieFinderUserPojo {
-	
-	
-	
-	private Long id;
+private Long id;
 	
 	@NotEmpty(message = "Name is Required")
 	private String name;
-	
-	@NotEmpty(message = "Email is Required")
-	@Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$" , message = "Please Give The Valid Email Id")
-	
-	private String email;
-	
-	@NotEmpty(message = "Password is Required")
-	private String password;
 	
 	@NotEmpty(message = "favoriteMovie is Required")
 	private String favouriteMovie;
@@ -44,18 +31,6 @@ public class MovieFinderUserPojo {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	
 	public String getFavouriteMovie() { // Changed from getFavoriteMovie
@@ -81,7 +56,5 @@ public class MovieFinderUserPojo {
 	public void setImage(byte[] image) {
 		this.image = image;
 	}
-
-
 
 }

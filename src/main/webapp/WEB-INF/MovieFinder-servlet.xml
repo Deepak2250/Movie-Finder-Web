@@ -37,7 +37,7 @@
 
 	<bean
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-		name="ds">
+		name="dataSource">
 
 		<property name="driverClassName"
 			value="${db.driverClassName}" />
@@ -49,19 +49,24 @@
 
 	<bean class="org.springframework.jdbc.core.JdbcTemplate"
 		name="jdbcTemplate">
-		<property name="dataSource" ref="ds"></property>
+		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate"></bean>
-	
+	<bean id="restTemplate"
+		class="org.springframework.web.client.RestTemplate"></bean>
+
 	<bean id="multipartResolver"
-    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
- <property name="defaultEncoding" value="utf-8" />
-    <!-- one of the properties available; the maximum file size in bytes -->
-    <property name="maxUploadSize" value="10485760"/>
-</bean>
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" />
+		
+		<property name="maxUploadSize" value="10485760" />
+	</bean>
 
 
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<mvc:resources mapping="/WEB-INF/resources/"
 		location="/resources/**" />
